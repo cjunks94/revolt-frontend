@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.0](https://github.com/stoatchat/for-web/compare/stoat-for-web-v0.1.0...stoat-for-web-v0.2.0) (2026-02-09)
+
+
+### Features
+
+* create invite button in invite management tab ([#596](https://github.com/stoatchat/for-web/issues/596)) ([0e93bf8](https://github.com/stoatchat/for-web/commit/0e93bf85b2159e63d1b28bc5c15997ee2bcca9fd))
+* save 'next path' if login is required to app ([#611](https://github.com/stoatchat/for-web/issues/611)) ([37e6dd9](https://github.com/stoatchat/for-web/commit/37e6dd965ff78b38abd4c721424d7121303e8cbe))
+
+
+### Bug Fixes
+
+* always darken background behind invite modal ([#612](https://github.com/stoatchat/for-web/issues/612)) ([8229f1e](https://github.com/stoatchat/for-web/commit/8229f1e80ed2f602fafa4b7cc4acd2e5de4b08a7))
+* don't show legacy redirect on desktop ([#613](https://github.com/stoatchat/for-web/issues/613)) ([46b3e9a](https://github.com/stoatchat/for-web/commit/46b3e9a4ca72bf52debcc925927bd0092b8ca919))
+* prioritize displayname over username on messages ([#595](https://github.com/stoatchat/for-web/issues/595)) ([9ffc252](https://github.com/stoatchat/for-web/commit/9ffc25250f4ec530459bcf21e93a8fbe33b38093))
+
 ## [0.1.0](https://github.com/stoatchat/for-web/compare/stoat-for-web-v0.0.14...stoat-for-web-v0.1.0) (2026-01-21)
 
 
