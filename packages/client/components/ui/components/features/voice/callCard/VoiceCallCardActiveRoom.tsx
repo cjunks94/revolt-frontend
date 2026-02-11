@@ -196,14 +196,63 @@ function ScreenshareTile() {
   const participant = useEnsureParticipant();
   const track = useMaybeTrackRefContext();
   const user = useUser(participant.identity);
+  let containerRef: HTMLDivElement | undefined;
 
   const isMuted = useIsMuted({
     participant,
     source: Track.Source.ScreenShareAudio,
   });
 
+  const handleFullscreen = () => {
+    const video = containerRef?.querySelector("video");
+    if (video) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        video.requestFullscreen();
+      }
+    }
+  };
+
+  const handlePictureInPicture = async () => {
+    const video = containerRef?.querySelector("video");
+    if (video && document.pictureInPictureEnabled) {
+      if (document.pictureInPictureElement) {
+        await document.exitPictureInPicture();
+      } else {
+        await video.requestPictureInPicture();
+      }
+    }
+  };
+
+  const handlePopout = () => {
+    const video = containerRef?.querySelector("video");
+    if (video && video.srcObject) {
+      const popup = window.open("", "_blank", "width=800,height=450,popup=true");
+      if (popup) {
+        popup.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>${user().username}'s Screen</title>
+            <style>
+              body { margin: 0; background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; }
+              video { max-width: 100%; max-height: 100%; }
+            </style>
+          </head>
+          <body><video autoplay></video></body>
+          </html>
+        `);
+        const popupVideo = popup.document.querySelector("video");
+        if (popupVideo) {
+          popupVideo.srcObject = video.srcObject;
+        }
+      }
+    }
+  };
+
   return (
-    <div class={tile() + " group"}>
+    <div ref={containerRef} class={tile() + " group"}>
       <VideoTrack
         style={{ "grid-area": "1/1" }}
         trackRef={track as TrackReference}
@@ -213,14 +262,52 @@ function ScreenshareTile() {
       <Overlay showOnHover>
         <OverlayInner>
           <OverflowingText>{user().username}</OverflowingText>
-          <Show when={isMuted()}>
-            <Symbol size={18}>no_sound</Symbol>
-          </Show>
+          <ScreenShareControls>
+            <Show when={isMuted()}>
+              <Symbol size={18}>no_sound</Symbol>
+            </Show>
+            <ControlButton onClick={handlePictureInPicture} title="Picture-in-Picture">
+              <Symbol size={18}>picture_in_picture_alt</Symbol>
+            </ControlButton>
+            <ControlButton onClick={handlePopout} title="Pop out">
+              <Symbol size={18}>open_in_new</Symbol>
+            </ControlButton>
+            <ControlButton onClick={handleFullscreen} title="Fullscreen">
+              <Symbol size={18}>fullscreen</Symbol>
+            </ControlButton>
+          </ScreenShareControls>
         </OverlayInner>
       </Overlay>
     </div>
   );
 }
+
+const ScreenShareControls = styled("div", {
+  base: {
+    display: "flex",
+    gap: "var(--gap-sm)",
+    alignItems: "center",
+  },
+});
+
+const ControlButton = styled("button", {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "var(--gap-xs)",
+    borderRadius: "var(--borderRadius-md)",
+    border: "none",
+    background: "rgba(0, 0, 0, 0.5)",
+    color: "var(--md-sys-color-on-surface)",
+    cursor: "pointer",
+    transition: "var(--transitions-fast) all",
+
+    _hover: {
+      background: "rgba(0, 0, 0, 0.8)",
+    },
+  },
+});
 
 const tile = cva({
   base: {
